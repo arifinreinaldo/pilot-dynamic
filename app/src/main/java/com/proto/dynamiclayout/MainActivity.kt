@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         if (savedInstanceState == null) {
             supportFragmentManager.commit {
-                add(R.id.fragment, DefaultFragment())
+                add(R.id.fragment, ComposeFragment(5))
                 addToBackStack("main")
             }
         }
@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
 
     fun nextScreen(count: Int) {
         supportFragmentManager.commit {
-            add(R.id.fragment, DefaultFragment())
+            add(R.id.fragment, ComposeFragment(count))
             addToBackStack("$count")
         }
     }

@@ -6,8 +6,13 @@ import com.proto.dynamiclayout.R
 import com.proto.dynamiclayout.databinding.HeaderItemBinding
 import com.xwray.groupie.viewbinding.BindableItem
 
-class HeaderItem(val headerData: String, val action: () -> Unit) :
-    BindableItem<HeaderItemBinding>() {
+class HeaderItem(
+    val headerData: String,
+    private val idx: Long,
+    val span: Int,
+    val action: () -> Unit
+) :
+    BindableItem<HeaderItemBinding>(idx) {
     var value = false
 
     companion object {
@@ -28,9 +33,9 @@ class HeaderItem(val headerData: String, val action: () -> Unit) :
 
     override fun getLayout(): Int = R.layout.header_item
     override fun initializeViewBinding(view: View) = HeaderItemBinding.bind(view)
-    override fun getSpanSize(spanCount: Int, position: Int) = 1
+    override fun getSpanSize(spanCount: Int, position: Int) = span
     override fun bind(viewBinding: HeaderItemBinding, position: Int) {
-        viewBinding.tvTitle.text = headerData
+        viewBinding.tvTitle.text = if (value) "checked" else headerData
         viewBinding.check.isChecked = value
         viewBinding.check.setOnClickListener {
             viewBinding.tvTitle.text = "Checked"

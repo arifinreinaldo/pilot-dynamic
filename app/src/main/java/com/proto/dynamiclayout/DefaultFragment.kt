@@ -2,13 +2,17 @@ package com.proto.dynamiclayout
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.proto.dynamiclayout.builder.ButtonBloc
+import com.proto.dynamiclayout.builder.HeaderItem
+import com.proto.dynamiclayout.builder.InputBloc
 import com.proto.dynamiclayout.builder.TitleBloc
 import com.proto.dynamiclayout.databinding.FragmentDefaultBinding
 import com.xwray.groupie.GroupieAdapter
@@ -35,9 +39,6 @@ class DefaultFragment : Fragment(R.layout.fragment_default) {
         setupDisplay()
         setupObserver()
         setupListener()
-//        formSection.add(ButtonBloc("Next", 10) {
-//            (requireActivity() as MainActivity).nextScreen(10)
-//        })
 //        val title = TitleBloc("Help", index.toLong()) {}
 //        headerSection.add(title)
 //        val input = InputBloc("hehe", index.toLong()) {}
@@ -80,20 +81,89 @@ class DefaultFragment : Fragment(R.layout.fragment_default) {
     }
 
     private fun setupDisplay() {
-        val layoutManager = GridLayoutManager(requireContext(), adapter.spanCount).apply {
-            spanSizeLookup = adapter.spanSizeLookup
+        val layoutManager = SpannedGridLayoutManager(
+            orientation = SpannedGridLayoutManager.Orientation.VERTICAL,
+            spans = 10
+        )
+//        val layoutManager = StaggeredGridLayoutManager(10, StaggeredGridLayoutManager.VERTICAL)
+//        val layoutManager = GridLayoutManager(requireContext(), adapter.spanCount).apply {
+//            spanSizeLookup = adapter.spanSizeLookup
+//        }
+        layoutManager.itemOrderIsStable = true
+
+        layoutManager.spanSizeLookup = SpannedGridLayoutManager.SpanSizeLookup { position ->
+            when (position % 3) {
+                0 -> {
+                    SpanSize(2, 2)
+                }
+                1 -> {
+                    SpanSize(8, 1)
+                }
+                2 -> {
+                    SpanSize(8, 1)
+                }
+                else -> {
+                    SpanSize(0, 0)
+                }
+            }
         }
         binding.recycler.layoutManager = layoutManager
         binding.recycler.adapter = adapter
         adapter.add(headerSection)
         adapter.add(formSection)
         adapter.add(tableSection)
-        formSection.add(ButtonBloc("Add Block", 10) {
-            addButton()
+        formSection.add(ButtonBloc("Add ListView", 10) {
+            addListView()
         })
-        formSection.add(ButtonBloc("Edit Block", 10) {
-            vm.editData()
+        formSection.add(ButtonBloc("Top", 10) {
+            binding.recycler.smoothScrollToPosition(13)
         })
+        formSection.add(ButtonBloc("Next", 10) {
+            (requireActivity() as MainActivity).nextScreen(10)
+        })
+//        formSection.add(ButtonBloc("Add Block", 10) {
+//            addButton()
+//        })
+//        formSection.add(ButtonBloc("Edit Block", 10) {
+//            vm.editData()
+//        })
+//        formSection.add(ButtonBloc("Add Text", 10) {
+//            addText()
+//        })
+    }
+
+    private fun addListView() {
+        for (i in 1..50) {
+//            val section = Section()
+//            section.add(HeaderItem("Huc", index.toLong(), 4) {})
+            vm.addData(index.toString(), HeaderItem("Huc", index.toLong(), 3) {})
+            index++
+//            section.add(InputBloc("Default Text", index.toLong(), 3) {})
+            vm.addData(
+                index.toString(),
+                InputBloc("Default Text", index.toLong(), 3) { value, pos ->
+                    vm.inputText(value, pos)
+                }
+            )
+            index++
+//            section.add(InputBloc("Default Text 2", index.toLong(), 3) {})
+            vm.addData(
+                index.toString(),
+                InputBloc("Default Text 2", index.toLong(), 3) { value, pos ->
+                    Toast.makeText(requireContext(), value, Toast.LENGTH_SHORT).show()
+                })
+            index++
+        }
+    }
+
+    private fun addText() {
+        for (i in 1..20) {
+            vm.addData(
+                index.toString(),
+                InputBloc("Default Text", index.toLong(), 10) { value, pos -> })
+            index++
+        }
+
     }
 
     private fun addButton() {
