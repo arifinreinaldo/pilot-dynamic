@@ -19,8 +19,13 @@ android {
     }
 
     buildTypes {
-        release {
+        debug {
+            resValue "string", "app_name", "DynaDebug"
             minifyEnabled false
+        }
+        release {
+            resValue "string", "app_name", "DynaProd"
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -86,6 +91,7 @@ dependencies {
     def lifecycle = "2.4.1"
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle"
 
