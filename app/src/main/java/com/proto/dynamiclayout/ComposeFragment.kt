@@ -41,7 +41,7 @@ class ComposeFragment(private val count: Int) : Fragment() {
     }
 
     fun next() {
-        (requireActivity() as MainActivity).nextScreen(Random.nextInt(1, 10))
+        (requireActivity() as MainActivity).nextScreen("Ho")
     }
 }
 

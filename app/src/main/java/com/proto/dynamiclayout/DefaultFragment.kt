@@ -119,7 +119,7 @@ class DefaultFragment : Fragment(R.layout.fragment_default) {
             binding.recycler.smoothScrollToPosition(13)
         })
         formSection.add(ButtonBloc("Next", 10) {
-            (requireActivity() as MainActivity).nextScreen(10)
+            (requireActivity() as MainActivity).nextScreen("")
         })
 //        formSection.add(ButtonBloc("Add Block", 10) {
 //            addButton()
