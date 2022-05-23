@@ -63,7 +63,7 @@ class DynamicViewModel : ViewModel() {
         dataNew.add(Bloc("NearOutOfStockLbl", 30.toFloat(), 2, 3, "LABEL", "STRING"))
         dataNew.add(Bloc("OutOfStock", 10.toFloat(), 1, 4, "OPTION", "STRING"))
         dataNew.add(Bloc("OutOfStockLbl", 20.toFloat(), 2, 4, "LABEL", "STRING"))
-        dataNew.add(Bloc("Reason", 30.toFloat(), 3, 4, "COMBOBOX", "STRING"))
+        dataNew.add(Bloc("Reason", 30.toFloat(), 3, 4, "COMBOBOX", "STRING", "123"))
         dataNew.add(Bloc("TakePhoto", 16.toFloat(), 4, 4, "TAKEPHOTOWITHPREVIEW", "STRING"))
         dataNew.add(Bloc("LeadBasePack", 0.toFloat(), 11, 5, "LABEL", "STRING"))
         dataNew.add(Bloc("StockDate", 0.toFloat(), 12, 5, "LABEL", "STRING"))

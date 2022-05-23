@@ -165,8 +165,20 @@ fun GenerateListNew(layoutConfig: MutableList<List<Bloc>>, action: (ACTION) -> U
                                         RADComboBox(
                                             modifier = Modifier.weight(
                                                 it.ColumnWidth,
-                                                true
-                                            )
+                                                true,
+                                            ),
+                                            it.FieldName,
+                                            listOf("1", "2", "3"),
+                                            { data ->
+                                                action(
+                                                    ACTION.TEXTCHANGE(
+                                                        data,
+                                                        "UPDATE",
+                                                        it.id
+                                                    )
+                                                )
+                                            },
+                                            it.value.value
                                         )
                                     }
                                     "OPTION" -> {

@@ -5,14 +5,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 
-@Preview
-@Composable
-fun showButton() {
-    RADButton(value = "heheh") {
-
-    }
-}
-
 @Composable
 fun RADButton(
     modifier: Modifier = Modifier,
@@ -29,11 +21,14 @@ fun RADButton(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun RADComboBox(modifier: Modifier) {
-    val options = listOf("1", "2", "3", "4", "5")
-
+fun RADComboBox(
+    modifier: Modifier,
+    label: String,
+    options: List<String>,
+    onValueChange: (String) -> Unit,
+    value: String
+) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedOptionText by remember { mutableStateOf(options[0]) }
     ExposedDropdownMenuBox(
         modifier = modifier,
         expanded = expanded,
@@ -43,9 +38,9 @@ fun RADComboBox(modifier: Modifier) {
     ) {
         TextField(
             readOnly = true,
-            value = selectedOptionText,
+            value = value,
             onValueChange = { },
-            label = { Text("Categories") },
+            label = { Text(label) },
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(
                     expanded = expanded
@@ -62,8 +57,8 @@ fun RADComboBox(modifier: Modifier) {
             options.forEach { selectionOption ->
                 DropdownMenuItem(
                     onClick = {
-                        selectedOptionText = selectionOption
                         expanded = false
+                        onValueChange(selectionOption)
                     }
                 ) {
                     Text(text = selectionOption)
