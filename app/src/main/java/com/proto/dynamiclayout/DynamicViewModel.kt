@@ -50,26 +50,26 @@ class DynamicViewModel : ViewModel() {
         formData.add(listOf(Component("Hehe", "HOHO", "LABEL"), Component("Hehe", "HOHO", "LABEL")))
         listDataNew.clear()
         val dataNew = mutableListOf<Bloc>()
-        dataNew.add(Bloc("Itemno", 30.toFloat(), 1, 1, "LABEL", "STRING"))
-        dataNew.add(Bloc("ItemName", 70.toFloat(), 2, 1, "LABEL", "STRING"))
-        dataNew.add(Bloc("ItemImg", 30.toFloat(), 0, 2, "IMAGEWITHPREVIEW", "STRING"))
-        dataNew.add(Bloc("StockAvailable", 8.toFloat(), 1, 2, "OPTION", "STRING"))
-        dataNew.add(Bloc("StockAvailableLbl", 30.toFloat(), 2, 2, "LABEL", "STRING"))
-        dataNew.add(Bloc("SACS", 8.toFloat(), 3, 2, "TEXTBOX", "NUMBER", "UNIQUE1"))
-        dataNew.add(Bloc("SAPC", 8.toFloat(), 4, 2, "TEXTBOX", "NUMBER", "UNIQUE2"))
-        dataNew.add(Bloc("WHCS", 8.toFloat(), 5, 2, "TEXTBOX", "NUMBER", "UNIQUE3"))
-        dataNew.add(Bloc("WHPC", 8.toFloat(), 6, 2, "TEXTBOX", "NUMBER", "UNIQUE4"))
-        dataNew.add(Bloc("NearOutOfStock", 10.toFloat(), 1, 3, "OPTION", "STRING"))
-        dataNew.add(Bloc("NearOutOfStockLbl", 30.toFloat(), 2, 3, "LABEL", "STRING"))
-        dataNew.add(Bloc("OutOfStock", 10.toFloat(), 1, 4, "OPTION", "STRING"))
-        dataNew.add(Bloc("OutOfStockLbl", 20.toFloat(), 2, 4, "LABEL", "STRING"))
-        dataNew.add(Bloc("Reason", 30.toFloat(), 3, 4, "COMBOBOX", "STRING", "123"))
-        dataNew.add(Bloc("TakePhoto", 16.toFloat(), 4, 4, "TAKEPHOTOWITHPREVIEW", "STRING"))
-        dataNew.add(Bloc("LeadBasePack", 0.toFloat(), 11, 5, "LABEL", "STRING"))
-        dataNew.add(Bloc("StockDate", 0.toFloat(), 12, 5, "LABEL", "STRING"))
-//        for (i in 1..10) {
-        listDataNew.add(dataNew)
-//        }
+        dataNew.add(Bloc("Itemno", 30.toFloat(), 1, 1, "LABEL", "STRING", 50F, "Label1"))
+        dataNew.add(Bloc("ItemName", 70.toFloat(), 2, 1, "LABEL", "STRING", 50F, "Label2"))
+        dataNew.add(Bloc("ItemImg", 30.toFloat(), 1, 2, "IMAGEWITHPREVIEW", "STRING", 128F))
+        dataNew.add(Bloc("StockAvailable", 8.toFloat(), 2, 2, "OPTION", "STRING", 50F))
+        dataNew.add(Bloc("StockAvailableLbl", 30.toFloat(), 3, 2, "LABEL", "STRING", 50F))
+        dataNew.add(Bloc("SACS", 8.toFloat(), 4, 2, "TEXTBOX", "NUMBER", 50F, "UNIQUE1"))
+        dataNew.add(Bloc("SAPC", 8.toFloat(), 5, 2, "TEXTBOX", "NUMBER", 50F, "UNIQUE2"))
+        dataNew.add(Bloc("WHCS", 8.toFloat(), 6, 2, "TEXTBOX", "NUMBER", 50F, "UNIQUE3"))
+        dataNew.add(Bloc("WHPC", 8.toFloat(), 7, 2, "TEXTBOX", "NUMBER", 50F, "UNIQUE4"))
+        dataNew.add(Bloc("NearOutOfStock", 10.toFloat(), 2, 3, "OPTION", "STRING", 58F))
+        dataNew.add(Bloc("NearOutOfStockLbl", 30.toFloat(), 3, 3, "LABEL", "STRING", 58F))
+        dataNew.add(Bloc("OutOfStock", 10.toFloat(), 1, 4, "OPTION", "STRING", 40F))
+        dataNew.add(Bloc("OutOfStockLbl", 20.toFloat(), 2, 4, "LABEL", "STRING", 40F))
+        dataNew.add(Bloc("Reason", 30.toFloat(), 3, 4, "COMBOBOX", "STRING", 40F, "123"))
+        dataNew.add(Bloc("TakePhoto", 16.toFloat(), 4, 4, "TAKEPHOTOWITHPREVIEW", "STRING", 40F))
+        dataNew.add(Bloc("LeadBasePack", 0.toFloat(), 11, 5, "LABEL", "STRING", 0F))
+        dataNew.add(Bloc("StockDate", 0.toFloat(), 12, 5, "LABEL", "STRING", 0F))
+        for (i in 1..149) {
+            listDataNew.add(dataNew)
+        }
     }
 
     var count: Int = 0
@@ -99,9 +99,12 @@ data class Bloc(
     var LineIndex: Int,
     val FieldControl: String,
     val DataMemberType: String,
+    val RowHeight: Float,
     val id: String = "",
     var value: MutableState<String> = mutableStateOf(""),
-)
+) {
+    fun uniqueID() = "$DisplayNo,$LineIndex"
+}
 
 
 sealed class ACTION {
