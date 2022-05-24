@@ -1,7 +1,10 @@
 package com.proto.dynamiclayout
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
 import androidx.viewbinding.ViewBinding
@@ -10,6 +13,8 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
+    private var doubleBackToExitPressedOnce = false
     private val binding by viewBinding(ActivityMainBinding::inflate)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,7 +23,7 @@ class MainActivity : AppCompatActivity() {
             val main = "Main"
             supportFragmentManager.commit {
                 add(R.id.fragment, DynamicFragment(main))
-                addToBackStack(main)
+//                addToBackStack(main)
             }
         }
     }
@@ -31,7 +36,29 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun back() {
-        supportFragmentManager.popBackStack()
+        if (supportFragmentManager.backStackEntryCount == 0) {
+            confirmExit()
+        } else {
+            supportFragmentManager.popBackStack()
+        }
+    }
+
+    override fun onBackPressed() {
+        back()
+    }
+
+    private fun confirmExit() {
+        if (doubleBackToExitPressedOnce) {
+            finish()
+            return
+        }
+
+        this.doubleBackToExitPressedOnce = true
+        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show()
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            doubleBackToExitPressedOnce = false
+        }, 2000)
     }
 
     fun popBack() {

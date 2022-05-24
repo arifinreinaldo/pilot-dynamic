@@ -15,7 +15,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.rounded.AccountCircle
+import androidx.compose.material.icons.twotone.CheckCircle
+import androidx.compose.material.icons.twotone.Info
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
@@ -30,7 +37,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.proto.dynamiclayout.composable.RADButton
 import com.proto.dynamiclayout.composable.RADComboBox
 import com.proto.dynamiclayout.theme.JetpackComposeTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class DynamicFragment(val ScreenName: String) : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -86,25 +95,57 @@ fun DynamicScreen(
     viewModel: DynamicViewModel,
     doNavigation: (Navigation) -> Unit,
 ) {
+    LaunchedEffect(key1 = true) {
+        viewModel.registerNetwork()
+    }
     viewModel.action.value.apply {
         doNavigation(this)
     }
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-    ) {
-        Column {
-            GenerateForm(
-                layoutConfig = viewModel.formData,
-                action = { value -> viewModel.doSomething(value) })
+    Scaffold(modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                title = {
+                    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                        Text(text = "Home", Modifier.weight(8F))
+                        IconButton(onClick = {
+                            viewModel.checkInternet()
+                        }) {
+                            Icon(
+                                if (viewModel.isInternetOn.value) Icons.Filled.Wifi else Icons.Filled.WifiOff,
+                                "Internet",
+                                tint = if (viewModel.isInternetOn.value) Color.Green else Color.Red,
+
+                                )
+                        }
+                    }
+                },
+                navigationIcon = {
+                    IconButton(onClick = {
+                        doNavigation(Navigation.BACK)
+                    }) {
+                        Icon(Icons.Filled.ArrowBack, "backIcon")
+                    }
+                },
+                backgroundColor = MaterialTheme.colors.background,
+//                contentColor = Color.White,
+                elevation = 10.dp
+            )
+        },
+        content = {
+            Column {
+                GenerateForm(
+                    layoutConfig = viewModel.formData,
+                    action = { value -> viewModel.doSomething(value) })
 //            GenerateList(viewModel.listData) { value -> viewModel.doSomething(value) }
 //            GenerateListNew(
 //                layoutConfig = viewModel.listDataNew,
 //                action = { value -> viewModel.doSomething(value) })
-            GenerateConstraintRecord(
-                layoutConfig = viewModel.listDataNew,
-                action = { value -> viewModel.doSomething(value) })
-        }
-    }
+                GenerateConstraintRecord(
+                    layoutConfig = viewModel.listDataNew,
+                    action = { value -> viewModel.doSomething(value) })
+            }
+        })
+
 }
 
 @Composable
@@ -165,17 +206,8 @@ fun GenerateConstraintRecord(layoutConfig: MutableList<List<Bloc>>, action: (ACT
                                         top.linkTo(prevRef.bottom)
                                         absoluteLeft.linkTo(prevRef.absoluteLeft)
                                     }
-//                                    refs["1,$prevY"]?.let { prevRef ->
-//                                        top.linkTo(prevRef.bottom)
-//                                        absoluteLeft.linkTo(prevRef.absoluteLeft)
-//                                    } ?: run {
-//                                        refs["1,${prevY - 1}"]?.let { prevRef ->
-//                                            top.linkTo(prevRef.bottom)
-//                                            absoluteLeft.linkTo(prevRef.absoluteLeft)
-//                                        }
-//                                    }
                                 } else if (prevY == 0) {
-                                    refs["$prevX,1"]?.let { prevRef ->
+                                    recursiveY(refs, prevX).let { prevRef ->
                                         top.linkTo(prevRef.top)
                                         start.linkTo(prevRef.end)
                                     }
@@ -225,6 +257,14 @@ fun recursiveX(
 ): ConstrainedLayoutReference {
     val ref = refs["1,$prevY"]
     return ref ?: recursiveX(refs, prevY - 1)
+}
+
+fun recursiveY(
+    refs: MutableMap<String, ConstrainedLayoutReference>,
+    prevX: Int
+): ConstrainedLayoutReference {
+    val ref = refs["$prevX,1"]
+    return ref ?: recursiveY(refs, prevX - 1)
 }
 
 @Composable

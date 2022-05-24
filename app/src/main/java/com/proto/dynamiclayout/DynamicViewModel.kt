@@ -1,16 +1,28 @@
 package com.proto.dynamiclayout
 
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
+import android.net.NetworkRequest
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class DynamicViewModel : ViewModel() {
+@HiltViewModel
+class DynamicViewModel @Inject constructor(val connect: ConnectivityManager) :
+    ViewModel() {
     val action = mutableStateOf(Navigation.INIT)
+    val isInternetOn = mutableStateOf(false)
     private val add = Component("Add", "Add", "BUTTON")
     private val remove = Component("Remove", "Remove", "BUTTON")
     private val reset = Component("Next Fragment", "Next Fragment", "BUTTON")
@@ -27,6 +39,45 @@ class DynamicViewModel : ViewModel() {
             textChangeValue.debounce(200).collectLatest {
                 Log.d("Last ", it.valueData)
             }
+        }
+    }
+
+    fun registerNetwork() {
+        val networkRequest = NetworkRequest.Builder()
+            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+            .build()
+        connect.registerNetworkCallback(networkRequest,
+            object : ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network) {
+                    super.onAvailable(network)
+                    connect.getNetworkCapabilities(network)?.apply {
+                        hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                    }
+                    setInternet(true)
+                }
+
+                override fun onLost(network: Network) {
+                    super.onLost(network)
+                    setInternet(false)
+                }
+            })
+    }
+
+    fun checkInternet() {
+        viewModelScope.launch(Dispatchers.IO) {
+            var rst = false
+            connect.getNetworkCapabilities(connect.activeNetwork)?.apply {
+                rst = hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+
+            }
+            setInternet(rst)
+        }
+    }
+
+    private fun setInternet(value: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            Log.d("TAG", "setInternet: $value")
+            isInternetOn.value = value
         }
     }
 
